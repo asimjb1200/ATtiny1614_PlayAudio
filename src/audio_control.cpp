@@ -37,6 +37,14 @@ void setupDAC()
     DAC0.DATA = 0x20;
 }
 
+static void setupStopAudioPin() {
+    // Set pin PA5 to input
+    PORTA.DIRCLR |= PIN5_bm;
+
+    // set the internal pull up AND set level detection sensing
+    PORTA.PIN5CTRL = PORT_PULLUPEN_bm | PIN_ISC_LEVEL;
+}
+
 void initHardwareTimer()
 {
     // set interrupt mode to periodic
@@ -75,6 +83,15 @@ void fillBuffer()
     if (bufferTwoNeedsFill) {
         readNextAudioChunk(256, audioBufferTwo);
         bufferTwoNeedsFill = false;
+    }
+}
+
+ISR(PORTA_PORT_vect) {
+    // Check to see if the interrupt came from the audio sht down pin
+    if (PORTA.INTFLAGS & PIN5_bm) {
+        PORTA.INTFLAGS &= ~PIN5_bm;
+
+        playbackEnabled = false;
     }
 }
 

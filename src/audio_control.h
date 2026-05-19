@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #define DAC PIN_PA6
+#define STOP_AUDIO_PIN PIN_PA5
 
 extern volatile bool playbackEnabled;
 extern uint32_t lastMemoryAddress;
@@ -12,3 +13,4 @@ extern volatile bool usingBufferOne;
 void setupDAC();
 void initHardwareTimer();
 void fillBuffer();
+void stopAudio();

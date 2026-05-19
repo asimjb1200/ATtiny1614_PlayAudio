@@ -4,6 +4,8 @@
 
 #define READ_CMD 0x03
 #define FLASH_RDSR 0x05 // Read Status Register
+#define PWR_DWN_CMD 0xB9
+#define WAKE_UP_CMD 0xAB
 
 uint32_t lastMemoryAddress = 0;
 static uint32_t eeLastMemoryAddress = 0;
@@ -71,4 +73,19 @@ void readNextAudioChunk(uint16_t size, uint8_t* buffer) {
     saveLastMemoryAddress();
     
     return;
+}
+
+void deepSleepFlash() {
+    waitForFlashReady();
+
+    digitalWrite(CS_PIN, LOW);
+    SPI.transfer(PWR_DWN_CMD);
+    digitalWrite(CS_PIN, HIGH);
+}
+
+void wakeUpFlash() {
+    digitalWrite(CS_PIN, LOW);
+    SPI.transfer(WAKE_UP_CMD);
+    digitalWrite(CS_PIN, HIGH);
+    delayMicroseconds(10);
 }
